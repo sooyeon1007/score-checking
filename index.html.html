@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="theme-color" content="#f5efe3">
+<title>점수 확인</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/[email protected]/dist/web/static/pretendard.css" />
+<style>
+  :root {
+    --bg: #f5efe3;
+    --bg-deep: #ebe2d0;
+    --ink: #1a1814;
+    --ink-soft: #4a453d;
+    --ink-mute: #8a8377;
+    --accent: #8b2c1e;
+    --accent-soft: #b85a4a;
+    --line: rgba(26, 24, 20, 0.12);
+    --serif: 'Noto Serif KR', serif;
+    --sans: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    height: 100%;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--sans);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    background-image:
+      radial-gradient(circle at 20% 10%, rgba(139, 44, 30, 0.04) 0%, transparent 40%),
+      radial-gradient(circle at 80% 90%, rgba(139, 44, 30, 0.03) 0%, transparent 50%);
+    background-attachment: fixed;
+    position: relative;
+    overflow-x: hidden;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");
+    opacity: 0.18;
+    pointer-events: none;
+    mix-blend-mode: multiply;
+    z-index: 0;
+  }
+
+  main {
+    position: relative;
+    z-index: 1;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 32px 24px 48px;
+  }
+
+  .card {
+    width: 100%;
+    max-width: 440px;
+    text-align: center;
+  }
+
+  .eyebrow {
+    font-family: var(--sans);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.32em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 28px;
+    opacity: 0;
+    animation: fadeUp 0.7s 0.1s ease forwards;
+  }
+
+  .eyebrow::before, .eyebrow::after {
+    content: '';
+    display: inline-block;
+    width: 18px;
+    height: 1px;
+    background: var(--accent);
+    vertical-align: middle;
+    margin: 0 12px;
+    opacity: 0.6;
+  }
+
+  h1 {
+    font-family: var(--serif);
+    font-weight: 700;
+    font-size: clamp(38px, 9vw, 52px);
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+    margin-bottom: 18px;
+    opacity: 0;
+    animation: fadeUp 0.7s 0.2s ease forwards;
+  }
+
+  h1 .accent {
+    color: var(--accent);
+    font-style: italic;
+    font-weight: 900;
+  }
+
+  .subtitle {
+    font-size: 15px;
+    color: var(--ink-soft);
+    line-height: 1.6;
+    margin-bottom: 44px;
+    opacity: 0;
+    animation: fadeUp 0.7s 0.3s ease forwards;
+  }
+
+  .form-section {
+    opacity: 0;
+    animation: fadeUp 0.7s 0.4s ease forwards;
+  }
+
+  .input-wrap {
+    position: relative;
+    margin-bottom: 16px;
+  }
+
+  .input-label {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    color: var(--ink-mute);
+    text-align: left;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+  }
+
+  input[type="text"] {
+    width: 100%;
+    padding: 18px 20px;
+    font-family: var(--serif);
+    font-size: 22px;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-align: center;
+    color: var(--ink);
+    background: rgba(255, 252, 245, 0.6);
+    border: 1.5px solid var(--line);
+    border-radius: 4px;
+    outline: none;
+    transition: all 0.25s ease;
+    -webkit-appearance: none;
+  }
+
+  input[type="text"]::placeholder {
+    color: var(--ink-mute);
+    font-weight: 400;
+    letter-spacing: 0.12em;
+    opacity: 0.55;
+  }
+
+  input[type="text"]:focus {
+    border-color: var(--accent);
+    background: rgba(255, 252, 245, 0.95);
+    box-shadow: 0 0 0 4px rgba(139, 44, 30, 0.08);
+  }
+
+  input[type="text"].shake {
+    animation: shake 0.4s ease;
+    border-color: var(--accent);
+  }
+
+  .hint {
+    font-size: 12px;
+    color: var(--ink-mute);
+    text-align: center;
+    margin-bottom: 28px;
+    letter-spacing: 0.02em;
+  }
+
+  button {
+    width: 100%;
+    padding: 18px 24px;
+    font-family: var(--sans);
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--bg);
+    background: var(--ink);
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    position: relative;
+    overflow: hidden;
+  }
+
+  button:hover {
+    background: var(--accent);
+    transform: translateY(-1px);
+    box-shadow: 0 8px 20px -8px rgba(139, 44, 30, 0.4);
+  }
+
+  button:active {
+    transform: translateY(0);
+  }
+
+  button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+  }
+
+  /* Result area */
+  .result {
+    margin-top: 40px;
+    min-height: 180px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .result-card {
+    width: 100%;
+    padding: 36px 28px;
+    background: rgba(255, 252, 245, 0.7);
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    text-align: center;
+    opacity: 0;
+    transform: translateY(12px);
+    animation: revealIn 0.6s ease forwards;
+    position: relative;
+  }
+
+  .result-card::before, .result-card::after {
+    content: '';
+    position: absolute;
+    width: 36px;
+    height: 1px;
+    background: var(--accent);
+    left: 50%;
+    transform: translateX(-50%);
+    opacity: 0;
+    animation: lineIn 0.5s 0.3s ease forwards;
+  }
+
+  .result-card::before { top: 14px; }
+  .result-card::after { bottom: 14px; }
+
+  .result-label {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.32em;
+    text-transform: uppercase;
+    color: var(--ink-mute);
+    margin-bottom: 18px;
+  }
+
+  .score {
+    font-family: var(--serif);
+    font-size: clamp(72px, 18vw, 96px);
+    font-weight: 900;
+    line-height: 1;
+    color: var(--ink);
+    letter-spacing: -0.04em;
+    display: inline-block;
+    opacity: 0;
+    transform: scale(0.85);
+    animation: scoreIn 0.7s 0.15s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  }
+
+  .score-suffix {
+    font-family: var(--serif);
+    font-size: 28px;
+    font-weight: 500;
+    color: var(--ink-soft);
+    margin-left: 4px;
+    vertical-align: top;
+    margin-top: 12px;
+    display: inline-block;
+  }
+
+  .result-foot {
+    margin-top: 16px;
+    font-size: 13px;
+    color: var(--ink-soft);
+    letter-spacing: 0.04em;
+    opacity: 0;
+    animation: fadeUp 0.5s 0.4s ease forwards;
+  }
+
+  .result-error .score-emoji {
+    font-size: 38px;
+    margin-bottom: 12px;
+    display: block;
+    opacity: 0;
+    animation: fadeIn 0.4s 0.1s ease forwards;
+  }
+
+  .result-error .error-msg {
+    font-family: var(--serif);
+    font-size: 19px;
+    font-weight: 500;
+    color: var(--accent);
+    margin-bottom: 6px;
+  }
+
+  .result-error .error-sub {
+    font-size: 13px;
+    color: var(--ink-soft);
+  }
+
+  /* Footer */
+  .foot-note {
+    margin-top: 56px;
+    font-size: 11px;
+    color: var(--ink-mute);
+    letter-spacing: 0.12em;
+    text-align: center;
+    opacity: 0;
+    animation: fadeUp 0.7s 0.6s ease forwards;
+  }
+
+  .foot-note span {
+    display: inline-block;
+    padding: 0 12px;
+  }
+
+  .foot-note span + span {
+    border-left: 1px solid var(--line);
+  }
+
+  /* Animations */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes fadeIn {
+    to { opacity: 1; }
+  }
+
+  @keyframes revealIn {
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes scoreIn {
+    to { opacity: 1; transform: scale(1); }
+  }
+
+  @keyframes lineIn {
+    to { opacity: 0.5; }
+  }
+
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-6px); }
+    75% { transform: translateX(6px); }
+  }
+
+  @media (max-width: 380px) {
+    main { padding: 24px 18px; }
+    input[type="text"] { font-size: 19px; padding: 16px; }
+    .result-card { padding: 30px 20px; }
+  }
+</style>
+</head>
+<body>
+<main>
+  <div class="card">
+    <div class="eyebrow">Score Lookup</div>
+
+    <h1>내 <span class="accent">점수</span><br>확인하기</h1>
+
+    <p class="subtitle">생년월일 6자리를 입력하면<br>본인의 점수를 확인할 수 있습니다.</p>
+
+    <div class="form-section">
+      <div class="input-wrap">
+        <label class="input-label" for="birthdate">생년월일 (YYMMDD)</label>
+        <input
+          type="text"
+          id="birthdate"
+          maxlength="6"
+          inputmode="numeric"
+          pattern="[0-9]*"
+          placeholder="예: 010302"
+          autocomplete="off"
+          spellcheck="false"
+        >
+      </div>
+
+      <button id="checkBtn" type="button">점수 확인</button>
+    </div>
+
+    <div class="result" id="result" aria-live="polite"></div>
+
+    <p class="foot-note">
+      <span>본인 정보만 조회됩니다</span>
+      <span>익명 처리</span>
+    </p>
+  </div>
+</main>
+
+<script>
+// ===== 점수 데이터 (생년월일 SHA-256 해시 → 점수) =====
+const SCORE_DB = {"7b976789b8752cd46c44ce07fb3ca73d53c74f15ac69d750fa7c8b1d298405d0":70,"b479538c5f26f50ae319e422e535024be2a84b5366e0f353a3c6000a2cd5b13a":62.5,"3ff7f270df8fa930fc891f06646ed72ba47f4dc2f651138633dd96a5c20b1910":72.5,"29164f8acacbb4081289bfe9f30c0f1809885acff884d734fca4056a6abaae12":80,"510593c008ac27cb6bc1e909b41c72b5a4e33eac48810cbfc06258e007393401":87.5,"cf1cb812395b92d56288561376dcab401345ec396c206719eceb9408c35452f5":70,"025c0735ca0c0d055b50c0ec31d0a26440f5fc04f66beab4d13af2363612b24c":80,"cbbb685dbacfb028ecae0d0f2c96c7b2b1cc3729ef96cc9a290e58410493e42b":80,"3727eff703ccac2404e274d29420b239ad663783858f6e8016639972c358d209":70,"cf0adbcffc8e898a4183c2f74eb42905ef75b4242f220fdf0a87e8371de64724":90,"4f33a47244c73af203d6720956fe21e536a1e170c449a4c029380c83e66f8f73":45,"cc1e42fd46c0a5d1a794973f54c22d1bf456e7bb03d68b43203e672c86d96434":90,"85f9c92f32f0e20a06418472398ad4daf16005d13cea624d19af9781544be694":70,"5e392e205dba5ba9a35c3ac31c97b3c387758895062487d6c368fa9b4a51b84d":72.5,"df4daa2c41fdf4eca09623e89ec7286fe9ee01ce8f28e6ab79c5cb2230064223":65,"d47b4f5a6322a52247733d2c047431daca347c7ef4d2608acedc6ede2d4884d0":75,"3dff2a6f3343738b524d74f33d2d655be350eaa2c9f952fe2c143c9b24d5c7f3":85,"1162b6dc886734ae1eae570708dd1b532bf60eab339fc4a286f7ada0ac76abbe":62.5,"ebb42f3ef594e96b4d3ad6d9deba1ee2b7027cc178592aaf856045cfc7b844b2":90,"144d29cbd5239d6d100f8d0d26339af64a1fc756a28f132f46ad0bc775a7cdc9":70,"08dfdd856c574db5cd6963f45cc212d08cf344a1a4090d20a464255cd47354d6":80,"947856ee714d4d0b4eac7dccacd717a5c581d02376939b0cb83a3a38fef19db3":65,"930853010b4c956e47e8d0af4b7757480c08879ec72f7c6b247e6788dcd4fff1":75,"2332dbc4ce34df8c50c55ee6fe63f02d1b201eb982e7a7abd4ae7e6773df7c99":27.5,"34d4ab68a605d86a18976fbfead62730ee43ebf9ba3f004811bae17f0e32ff83":72.5,"fb2bfb4f66d41ec1cc93867aa27d797016a2edea36844d18bd1be8572d9753e5":50,"38d058ab1bb1a8ed8420cbc1b0832372cc42e2d60b9efda316877ef0f87195a0":72.5,"7dc187cca7ca557cc22c419531f5171525ec9da4cdb553d08c3f69254e4ad815":72.5,"3441faae8b081fcb1a1059acc24e113fbf619d257037c35b4f58a51c060d2c75":77.5,"0d27746118cbf838425ba1fcaa79a64a14c186cab78f34431499135d5a850d9a":85,"eed9d8130d9f5ba8aaf2e05dd0c09ce0b4a4ddcb3775ae50e0fbc11b85a1a475":85,"d77a5400f92dbc780a9c35cf9575123c2c4898773d3b3f5cf9bbb4471728bcdc":50,"4179036b5b4d9ad4e17311f681e9b87d814e0e1f833909a060446b3b81e3c34f":92.5,"98cbc2ad42ff20479f7221ee383626ff19b20ab31064cccb500df4cc4a25c7b3":70,"0556f4b80ab31055acb20227a1297b826e1b241111ce9a5e159616173c9f870f":75,"6c30cb96e26280c578e2776c6fb128d590de4f944c8c34e66d32f7b4728d521d":82.5,"d3718bc7b24679cca7327014275ee1e5a741de337e893ca249b90ea17ab65ad4":77.5,"dfca3f89e71dd2f855673e4433ab408c3068ab6050cdc3e84ecf7f8ec5f67573":65,"b027d5fbed6116fc76c74a45cbeee155ae6432f1da402245998d38db3bcd0415":62.5,"1c18134fec0ede0130f507d5daea5eadbfb9f89b96587a980a0d75a22aea5537":95,"320eef20b3222c7656e6f6018669f9bdb246a16f10fffa35cf97f0f265e2a349":75,"4b8895a25c17f773fb06e1a8202d03a095e68de98f3dc7ba469bf65ff7eb9023":72.5,"02a7cee7831601ee73233c72259af929bf989f437bbdec64f45b3b970fee1bf5":85,"634a34a9e47b171cb2011fac5dde1678bfbb288361375b73ae4c4c0c6b2b1c17":90};
+
+// ===== SHA-256 해시 함수 =====
+async function sha256(text) {
+  const buf = new TextEncoder().encode(text);
+  const hashBuf = await crypto.subtle.digest('SHA-256', buf);
+  return Array.from(new Uint8Array(hashBuf))
+    .map(b => b.toString(16).padStart(2, '0'))
+    .join('');
+}
+
+// ===== UI 요소 =====
+const input = document.getElementById('birthdate');
+const btn = document.getElementById('checkBtn');
+const result = document.getElementById('result');
+
+// 숫자만 입력 허용
+input.addEventListener('input', (e) => {
+  e.target.value = e.target.value.replace(/[^0-9]/g, '');
+});
+
+// Enter 키로 제출
+input.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') checkScore();
+});
+
+btn.addEventListener('click', checkScore);
+
+async function checkScore() {
+  const value = input.value.trim();
+
+  // 입력 검증
+  if (!/^\d{6}$/.test(value)) {
+    input.classList.remove('shake');
+    void input.offsetWidth; // 리플로우 강제
+    input.classList.add('shake');
+    showError('형식 오류', '6자리 숫자를 입력해주세요');
+    return;
+  }
+
+  btn.disabled = true;
+  btn.textContent = '조회 중...';
+
+  try {
+    const hash = await sha256(value);
+    const score = SCORE_DB[hash];
+
+    if (score !== undefined) {
+      showScore(score);
+    } else {
+      showError('일치하는 정보 없음', '생년월일을 다시 확인해주세요');
+    }
+  } catch (err) {
+    showError('오류 발생', '잠시 후 다시 시도해주세요');
+  } finally {
+    setTimeout(() => {
+      btn.disabled = false;
+      btn.textContent = '점수 확인';
+    }, 300);
+  }
+}
+
+function showScore(score) {
+  result.innerHTML = `
+    <div class="result-card">
+      <div class="result-label">Your Score</div>
+      <div>
+        <span class="score">${score}</span><span class="score-suffix">점</span>
+      </div>
+      <p class="result-foot">수고하셨습니다.</p>
+    </div>
+  `;
+}
+
+function showError(title, sub) {
+  result.innerHTML = `
+    <div class="result-card result-error">
+      <span class="score-emoji">·</span>
+      <p class="error-msg">${title}</p>
+      <p class="error-sub">${sub}</p>
+    </div>
+  `;
+}
+</script>
+</body>
+</html>
